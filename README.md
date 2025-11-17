@@ -2,6 +2,8 @@
 
 <div align="center">
 
+CA: D13E7ffJqR5b5BJEgrP46QMnug8U5jgGLPtV6n2xpump
+
 **Build with Privacy. Powered by ZK Swarm Intelligence.**
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
