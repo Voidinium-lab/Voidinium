@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  voidinium-orchestrator:
+    build: ..
+    container_name: voidinium-orchestrator
+    ports:
+      - "8000:8000"
+    environment:
+      - VOIDINIUM_MODE=zk
+      - PRIVACY_LEVEL=maximum
+      - SWARM_SIZE=5
+    volumes:
+      - ../Voidinium:/app/Voidinium
+      - orchestrator-data:/app/data
+    networks:
+      - voidinium-network
+    restart: unless-stopped
+
+  voidinium-agent-1:
+    build: ..
+    container_name: voidinium-agent-1
+    environment:
+      - AGENT_ID=1
+      - ORCHESTRATOR_URL=http://voidinium-orchestrator:8000
+    networks:
+      - voidinium-network
+    depends_on:
+      - voidinium-orchestrator
+    restart: unless-stopped
+
+  voidinium-agent-2:
+    build: ..
+    container_name: voidinium-agent-2
+    environment:
+      - AGENT_ID=2
+      - ORCHESTRATOR_URL=http://voidinium-orchestrator:8000
+    networks:
+      - voidinium-network
+    depends_on:
+      - voidinium-orchestrator
+    restart: unless-stopped
+
+  ipfs-node:
+    image: ipfs/go-ipfs:latest
+    container_name: voidinium-ipfs
+    ports:
+      - "4001:4001"
+      - "5001:5001"
+      - "8080:8080"
+    volumes:
+      - ipfs-data:/data/ipfs
+    networks:
+      - voidinium-network
+    restart: unless-stopped
+
+volumes:
+  orchestrator-data:
+  ipfs-data:
+
+networks:
+  voidinium-network:
+    driver: bridge

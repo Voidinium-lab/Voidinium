@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: voidinium-orchestrator
+  labels:
+    app: voidinium
+    component: orchestrator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: voidinium
+      component: orchestrator
+  template:
+    metadata:
+      labels:
+        app: voidinium
+        component: orchestrator
+    spec:
+      containers:
+      - name: orchestrator
+        image: voidinium:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: VOIDINIUM_MODE
+          value: "zk"
+        - name: PRIVACY_LEVEL
+          value: "maximum"
+        - name: SWARM_SIZE
+          value: "5"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "2000m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: voidinium-orchestrator
+spec:
+  selector:
+    app: voidinium
+    component: orchestrator
+  ports:
+  - protocol: TCP
+    port: 8000
+    targetPort: 8000
+  type: LoadBalancer
